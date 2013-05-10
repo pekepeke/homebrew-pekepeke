@@ -8,8 +8,7 @@ class MacvimKaoriya < Formula
   depends_on 'cmigemo-mk'
   depends_on 'ctags-objc-ja'
   depends_on 'gettext-mk'
-  # depends_on 'lua'
-
+  depends_on 'lua'
 
   def ptches
     patch_level = version.to_s.split('.').last.to_i
@@ -27,6 +26,7 @@ class MacvimKaoriya < Formula
     ENV.append 'VERSIONER_PYTHON_VERSION', '2.7'
     ENV.append 'vi_cv_path_python3', '/usr/local/bin/python3'
     ENV.append 'vi_cv_path_ruby19', '/usr/local/bin/ruby19'
+
 
     system './configure', "--prefix=#{prefix}",
       '--with-features=huge',
@@ -86,9 +86,11 @@ class MacvimKaoriya < Formula
       cp f, dict
     end
 
+    lua = Formula.factory('lua')
     [
       "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib",
       "#{HOMEBREW_PREFIX}/lib/libmigemo.1.1.0.dylib",
+      "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.version}.dylib",
     ].each do |lib|
       newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
       system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
