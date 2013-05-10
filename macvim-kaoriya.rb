@@ -8,6 +8,7 @@ class MacvimKaoriya < Formula
   depends_on 'cmigemo-mk'
   depends_on 'ctags-objc-ja'
   depends_on 'gettext-mk'
+  # depends_on 'lua'
 
 
   def ptches
@@ -28,7 +29,7 @@ class MacvimKaoriya < Formula
     ENV.append 'vi_cv_path_ruby19', '/usr/local/bin/ruby19'
 
     system './configure', "--prefix=#{prefix}",
-    '--with-features=huge',
+      '--with-features=huge',
       '--enable-multibyte',
       '--enable-netbeans',
       '--with-tlib=ncurses',
@@ -38,8 +39,10 @@ class MacvimKaoriya < Formula
       '--enable-python3interp=dynamic',
       '--enable-rubyinterp=dynamic',
       '--enable-ruby19interp=dynamic',
-      '--enable-luainterp=dynamic',
+      '--enable-luainterp',
       "--with-lua-prefix=#{HOMEBREW_PREFIX}"
+      # '--enable-luainterp=dynamic',
+    # TODO dynamic lua or static support
 
     `rm src/po/ja.sjis.po`
     `touch src/po/ja.sjis.po`
@@ -52,7 +55,8 @@ class MacvimKaoriya < Formula
     end
 
     inreplace 'src/auto/config.mk' do |s|
-      s.gsub! "-L#{Formula.factory('readline').prefix}/lib", ''
+      # s.gsub! "-L#{Formula.factory('readline').prefix}/lib", ''
+      s.gsub! "-L#{HOMEBREW_PREFIX}/Cellar/readline/6.2.2/lib", ''
     end
 
     Dir.chdir('src/po') {system 'make'}
@@ -90,5 +94,10 @@ class MacvimKaoriya < Formula
       system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
       cp lib, app + 'Frameworks'
     end
+
+    # overrides homebrew gettext
+    lib = "#{HOMEBREW_PREFIX}/lib/libintl.8.dylib"
+    newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
+    system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
   end
 end

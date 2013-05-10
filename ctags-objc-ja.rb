@@ -3,8 +3,10 @@ require 'formula'
 class CtagsObjcJa < Formula
   homepage 'https://github.com/splhack/ctags-objc-ja'
   head 'https://github.com/splhack/ctags-objc-ja.git'
+  url 'https://github.com/splhack/ctags-objc-ja.git', :revision => '0b6fe37868bdb6379da4428825c9d8157290dd7e'
 
   depends_on "autoconf" => :build
+  keg_only 'This module for macvim-kaoriya'
 
   def install
     ENV.remove_macosxsdk

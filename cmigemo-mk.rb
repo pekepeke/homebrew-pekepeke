@@ -3,6 +3,7 @@ require 'formula'
 class CmigemoMk < Formula
   homepage 'http://www.kaoriya.net/software/cmigemo'
   head 'https://code.google.com/p/cmigemo/', :using => :hg
+  url 'https://code.google.com/p/cmigemo/', :using => :hg, :revision => '4e16f44f91df'
 
   depends_on 'nkf' => :build
 
@@ -31,7 +32,7 @@ index 8ea8a66..4f27a97 100644
 --- a/dict/dict.mak
 +++ b/dict/dict.mak
 @@ -6,7 +6,7 @@
- 
+
  DICT 		= migemo-dict
  DICT_BASE	= base-dict
 -SKKDIC_BASEURL 	= http://openlab.ring.gr.jp/skk/dic
