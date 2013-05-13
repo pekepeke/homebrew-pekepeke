@@ -5,6 +5,7 @@ class GettextMk < Formula
   url 'http://ftpmirror.gnu.org/gettext/gettext-0.18.1.1.tar.gz'
   mirror 'http://ftp.gnu.org/gnu/gettext/gettext-0.18.1.1.tar.gz'
   sha1 '5009deb02f67fc3c59c8ce6b82408d1d35d4e38f'
+  version '0.18.1.1'
 
   keg_only "OS X provides the BSD gettext library and some software gets confused if both are in the library path."
 

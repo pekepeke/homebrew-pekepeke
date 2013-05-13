@@ -2,8 +2,9 @@ require 'formula'
 
 class CmigemoMk < Formula
   homepage 'http://www.kaoriya.net/software/cmigemo'
-  head 'https://code.google.com/p/cmigemo/', :using => :hg
-  url 'https://code.google.com/p/cmigemo/', :using => :hg, :revision => '4e16f44f91df'
+  head 'https://github.com/koron/cmigemo.git'
+  url 'https://github.com/koron/cmigemo.git', :revision => '57699e33f406a3603fcd733b15d0faec5c2e141c'
+  version '1.3'
 
   depends_on 'nkf' => :build
 
