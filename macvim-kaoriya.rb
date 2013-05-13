@@ -8,7 +8,7 @@ class MacvimKaoriya < Formula
   depends_on 'cmigemo-mk'
   depends_on 'ctags-objc-ja'
   depends_on 'gettext-mk'
-  depends_on 'lua'
+  # depends_on 'lua'
 
   def ptches
     patch_level = version.to_s.split('.').last.to_i
@@ -27,6 +27,13 @@ class MacvimKaoriya < Formula
     ENV.append 'vi_cv_path_python3', '/usr/local/bin/python3'
     ENV.append 'vi_cv_path_ruby19', '/usr/local/bin/ruby19'
 
+    opts = []
+
+    lua = Formula.factory('lua')
+    if lua.installed?
+      opts << '--enable-luainterp'
+      opts << "--with-lua-prefix=#{HOMEBREW_PREFIX}"
+    end
 
     system './configure', "--prefix=#{prefix}",
       '--with-features=huge',
@@ -39,10 +46,7 @@ class MacvimKaoriya < Formula
       '--enable-python3interp=dynamic',
       '--enable-rubyinterp=dynamic',
       '--enable-ruby19interp=dynamic',
-      '--enable-luainterp',
-      "--with-lua-prefix=#{HOMEBREW_PREFIX}"
-      # '--enable-luainterp=dynamic',
-    # TODO dynamic lua or static support
+      *opts
 
     `rm src/po/ja.sjis.po`
     `touch src/po/ja.sjis.po`
@@ -86,24 +90,25 @@ class MacvimKaoriya < Formula
       cp f, dict
     end
 
-    lua = Formula.factory('lua')
-    [
-      "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib",
+    libs = [
       "#{HOMEBREW_PREFIX}/lib/libmigemo.1.1.0.dylib",
-      "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.version}.dylib",
-    ].each do |lib|
+    ]
+    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.version}.dylib" if lua.installed?
+
+    libs.each do |lib|
       newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
       system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
       cp lib, app + 'Frameworks'
     end
 
+    lib = "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib"
     gettext = Formula.factory('gettext')
     if gettext.installed?
       # overrides homebrew gettext
       lib = "#{HOMEBREW_PREFIX}/lib/libintl.8.dylib"
-      newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
-      system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
-      cp lib, app + 'Frameworks'
     end
+    newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
+    system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
+    cp lib, app + 'Frameworks'
   end
 end
