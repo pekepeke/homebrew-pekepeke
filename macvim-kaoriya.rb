@@ -3,7 +3,7 @@ require 'formula'
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
   head 'https://github.com/splhack/macvim.git'
-  version '7.3.918'
+  version '7.3.969'
 
   depends_on 'cmigemo-mk'
   depends_on 'ctags-objc-ja'
@@ -20,12 +20,14 @@ class MacvimKaoriya < Formula
     ENV.remove_macosxsdk
     ENV.macosxsdk '10.7'
     ENV.append 'MACOSX_DEPLOYMENT_TARGET', '10.7'
-    ENV.append 'CFLAGS', '-mmacosx-version-min=10.7'
-    ENV.append 'LDFLAGS', '-mmacosx-version-min=10.7 -headerpad_max_install_names'
+    # ENV.append 'CFLAGS', '-mmacosx-version-min=10.7'
+    # ENV.append 'LDFLAGS', '-mmacosx-version-min=10.7 -headerpad_max_install_names'
+    ENV.append 'CFLAGS', "-mmacosx-version-min=10.7 -I#{HOMEBREW_PREFIX}/opt/gettext-mk/include"
+    ENV.append 'LDFLAGS', "-mmacosx-version-min=10.7 -headerpad_max_install_names -L#{HOMEBREW_PREFIX}/opt/gettext-mk/lib"
     ENV.append 'VERSIONER_PERL_VERSION', '5.12'
     ENV.append 'VERSIONER_PYTHON_VERSION', '2.7'
-    ENV.append 'vi_cv_path_python3', '/usr/local/bin/python3'
-    ENV.append 'vi_cv_path_ruby19', '/usr/local/bin/ruby19'
+    ENV.append 'vi_cv_path_python3', "#{HOMEBREW_PREFIX}/bin/python3"
+    ENV.append 'vi_cv_path_ruby19', "#{HOMEBREW_PREFIX}/bin/ruby19"
 
     opts = []
 
@@ -102,11 +104,11 @@ class MacvimKaoriya < Formula
     end
 
     lib = "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib"
-    gettext = Formula.factory('gettext')
-    if gettext.installed?
-      # overrides homebrew gettext
-      lib = "#{HOMEBREW_PREFIX}/lib/libintl.8.dylib"
-    end
+    # gettext = Formula.factory('gettext')
+    # if gettext.installed?
+    #   # overrides homebrew gettext
+    #   lib = "#{HOMEBREW_PREFIX}/lib/libintl.8.dylib"
+    # end
     newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
     system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
     cp lib, app + 'Frameworks'
