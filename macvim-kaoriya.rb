@@ -104,11 +104,15 @@ class MacvimKaoriya < Formula
     end
 
     lib = "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib"
-    # gettext = Formula.factory('gettext')
-    # if gettext.installed?
-    #   # overrides homebrew gettext
-    #   lib = "#{HOMEBREW_PREFIX}/lib/libintl.8.dylib"
-    # end
+    begin
+      safe_system "otool -L #{macos + 'Vim'} | grep #{lib}"
+    rescue ErrorDuringExecution => e
+      gettext = Formula.factory('gettext')
+      if gettext.installed?
+        # overrides homebrew gettext
+        lib = "#{HOMEBREW_PREFIX}/lib/libintl.8.dylib"
+      end
+    end
     newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
     system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
     cp lib, app + 'Frameworks'
