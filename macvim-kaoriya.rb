@@ -2,16 +2,19 @@ require 'formula'
 
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
-  head 'https://github.com/splhack/macvim.git'
   version '7.3.969'
+  head 'https://github.com/splhack/macvim.git'
+  url 'https://github.com/splhack/macvim.git'
+  sha1 '60b00e98fd48000aedcc454b66ec50114897e3af'
 
   depends_on 'cmigemo-mk'
   depends_on 'ctags-objc-ja'
   depends_on 'gettext-mk'
   # depends_on 'lua'
 
-  def ptches
-    patch_level = version.to_s.split('.').last.to_i
+  def patches
+    # patch_level = version == "HEAD" ? '1036' : version.to_s.split('.').last.to_i
+    patch_level = 827
     {'p0' => (807..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i }}
   end
 
