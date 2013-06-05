@@ -3,8 +3,11 @@ require 'formula'
 class MacvimCustom < Formula
   homepage 'http://code.google.com/p/macvim/'
   url 'https://github.com/b4winckler/macvim.git'
-  # version '7.3.1020'
-  version '7.3.1053'
+  # version '7.3.1020' # already merged
+  # version '7.3.1053'
+  # version '7.3.1115' # patch failed
+  # version '7.3.1100' # too slow
+  version '7.3.969' # stable
   sha1 '411115c18afbcab9d6f1076f597e0e2b9e8e427b'
 
   head 'https://github.com/b4winckler/macvim.git', :branch => 'master'
@@ -16,12 +19,14 @@ class MacvimCustom < Formula
   depends_on 'ctags-objc-ja'
   # depends_on 'cscope'
   depends_on 'lua' => :optional
+  # depends_on 'luajit' => :optional
 
   depends_on :xcode # For xcodebuild.
 
   def patches
     patch_level = version.to_s.split('.').last.to_i
     {'p0' => (1021..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i } }
+    # << ['https://gist.github.com/shirosaki/5663617/raw/0ad8eaf99e977f78af17568753e3b712ff3e83bc/vim_luajit.patch']
   end
 
   def install
@@ -64,6 +69,13 @@ class MacvimCustom < Formula
       # --enable-pythoninterp
       # --enable-rubyinterp
       # --enable-tclinterp
+
+    # lua = Formula.factory('luajit')
+    # if lua.installed?
+    #   args << "--with-luajit"
+    # else
+    #   lua = Formula.factory('lua')
+    # end
 
     lua = Formula.factory('lua')
     if build.with? "lua" or lua.installed?
@@ -114,7 +126,8 @@ class MacvimCustom < Formula
 
     libs = [
     ]
-    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.version}.dylib" if lua.installed?
+    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.installed_version}.dylib" \
+      if lua.installed? && lua.name == "lua"
 
     libs.each do |lib|
       newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
