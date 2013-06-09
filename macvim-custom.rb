@@ -3,12 +3,10 @@ require 'formula'
 class MacvimCustom < Formula
   homepage 'http://code.google.com/p/macvim/'
   url 'https://github.com/b4winckler/macvim.git'
-  # version '7.3.1020' # already merged
-  # version '7.3.1053'
   # version '7.3.1115' # patch failed
   # version '7.3.1100' # too slow
-  version '7.3.969' # stable
-  sha1 '411115c18afbcab9d6f1076f597e0e2b9e8e427b'
+  version '7.3.1148'
+  sha1 '3e20bda2432e694ba89d97652da12f1d18438f19'
 
   head 'https://github.com/b4winckler/macvim.git', :branch => 'master'
 
@@ -25,7 +23,7 @@ class MacvimCustom < Formula
 
   def patches
     patch_level = version.to_s.split('.').last.to_i
-    {'p0' => (1021..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i } }
+    {'p0' => (1149..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i } }
     # << ['https://gist.github.com/shirosaki/5663617/raw/0ad8eaf99e977f78af17568753e3b712ff3e83bc/vim_luajit.patch']
   end
 
@@ -77,6 +75,9 @@ class MacvimCustom < Formula
     #   lua = Formula.factory('lua')
     # end
 
+    if build.include? "icon-beautify"
+      curl "http://cl.ly/0f18090S3d2W/download/MacVim.icns", "--output", "src/MacVim/icons/MacVim.icns"
+    end
     lua = Formula.factory('lua')
     if build.with? "lua" or lua.installed?
       args << "--enable-luainterp"
