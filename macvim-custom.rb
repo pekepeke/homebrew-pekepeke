@@ -3,10 +3,8 @@ require 'formula'
 class MacvimCustom < Formula
   homepage 'http://code.google.com/p/macvim/'
   url 'https://github.com/b4winckler/macvim.git'
-  # version '7.3.1115' # patch failed
-  # version '7.3.1100' # too slow
-  version '7.3.1148'
-  sha1 '3e20bda2432e694ba89d97652da12f1d18438f19'
+  version '7.3.1193'
+  sha1 '946e2197253adb92fceef3fa9296c7b11ec41a1d'
 
   head 'https://github.com/b4winckler/macvim.git', :branch => 'master'
 
@@ -25,8 +23,9 @@ class MacvimCustom < Formula
   def patches
     patch_level = version.to_s.split('.').last.to_i
     {
-      'p0' => (1149..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
-      'p1' => 'https://gist.github.com/pekepeke/5755279/raw/e6dc238aabd73bf8507f8d13c455b899d7094e0b/macvim_luajit_v73_1148.diff',
+      'p0' => (1194..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
+      'p1' => 'https://gist.github.com/pekepeke/5794705/raw/bae53f52cbaeb3f8b0d82b8a6fa3891c7ee97859/macvim_luajit_v73.patch',
+      # 'p1' => 'https://gist.github.com/pekepeke/5755279/raw/e6dc238aabd73bf8507f8d13c455b899d7094e0b/macvim_luajit_v73_1148.diff',
     }
   end
 
