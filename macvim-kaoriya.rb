@@ -2,20 +2,29 @@ require 'formula'
 
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
-  version '7.3.969'
+  version '7.3.1223'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '60b00e98fd48000aedcc454b66ec50114897e3af'
+  sha1 'a36889cbe7026eb102daa2739e2e06b9d742a568'
+
+  option "with-luajit", "Build with luajit"
+  option "with-lua", "Build with lua"
+  option "icon-beautify", "Build with icon(http://cl.ly/0f18090S3d2W/download/MacVim.icns)"
 
   depends_on 'cmigemo-mk'
   depends_on 'ctags-objc-ja'
   depends_on 'gettext-mk'
   # depends_on 'lua'
 
+  depends_on 'luajit' => :optional
+  depends_on 'lua' => :optional
+
   def patches
-    # patch_level = version == "HEAD" ? '1036' : version.to_s.split('.').last.to_i
-    patch_level = 827
-    {'p0' => (807..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i }}
+    patch_level = version.to_s.split('.').last.to_i
+    {
+      'p0' => (1224..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
+      'p1' => 'https://gist.github.com/pekepeke/5864150/raw/8e8949979509d7997713137e9ffe49f59522819c/macvim-kaoriya_luajit_v73.patch',
+    }
   end
 
 
@@ -29,15 +38,33 @@ class MacvimKaoriya < Formula
     ENV.append 'LDFLAGS', "-mmacosx-version-min=10.7 -headerpad_max_install_names -L#{HOMEBREW_PREFIX}/opt/gettext-mk/lib"
     ENV.append 'VERSIONER_PERL_VERSION', '5.12'
     ENV.append 'VERSIONER_PYTHON_VERSION', '2.7'
+    ENV.append 'vi_cv_path_perl', '/usr/bin/perl'
+    ENV.append 'vi_cv_path_python', '/usr/bin/python'
+    ENV.append 'vi_cv_path_ruby', '/usr/bin/ruby'
     ENV.append 'vi_cv_path_python3', "#{HOMEBREW_PREFIX}/bin/python3"
     ENV.append 'vi_cv_path_ruby19', "#{HOMEBREW_PREFIX}/bin/ruby19"
 
     opts = []
 
-    lua = Formula.factory('lua')
-    if lua.installed?
+    lua = nil
+    with_lua = false
+    if build.include? 'with-luajit'
+      opts << "--with-luajit"
+
+      lua = Formula.factory('luajit')
+      with_lua = true
+    elsif build.include? "--with-lua"
+      lua = Formula.factory('lua')
+      with_lua = true
+    end
+
+    if with_lua
       opts << '--enable-luainterp'
       opts << "--with-lua-prefix=#{HOMEBREW_PREFIX}"
+    end
+
+    if build.include? "icon-beautify"
+      curl "http://cl.ly/0f18090S3d2W/download/MacVim.icns", "--output", "src/MacVim/icons/MacVim.icns"
     end
 
     system './configure', "--prefix=#{prefix}",
@@ -98,7 +125,13 @@ class MacvimKaoriya < Formula
     libs = [
       "#{HOMEBREW_PREFIX}/lib/libmigemo.1.1.0.dylib",
     ]
-    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.version}.dylib" if lua.installed?
+
+    # FIXME : detect linked version
+    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.installed_version}.dylib" \
+      if lua && lua.name == "lua"
+
+    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}-5.1.#{lua.installed_version}.dylib" \
+      if lua && lua.name == "luajit"
 
     libs.each do |lib|
       newname = "@executable_path/../Frameworks/#{File.basename(lib)}"

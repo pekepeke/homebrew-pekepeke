@@ -70,18 +70,22 @@ class MacvimCustom < Formula
       # --enable-ruby19interp=dynamic
       # --enable-tclinterp
 
-    lua = Formula.factory('luajit')
-    if lua.installed?
+    lua = nil
+    with_lua = false
+    if build.include? 'with-luajit'
       args << "--with-luajit"
-    else
+      lua = Formula.factory('luajit')
+      with_lua = true
+    elsif build.include? "--with-lua"
       lua = Formula.factory('lua')
+      with_lua = true
     end
 
     if build.include? "icon-beautify"
       curl "http://cl.ly/0f18090S3d2W/download/MacVim.icns", "--output", "src/MacVim/icons/MacVim.icns"
     end
-    lua = Formula.factory('lua')
-    if build.with? "lua" or lua.installed?
+
+    if with_lua
       args << "--enable-luainterp"
       args << "--with-lua-prefix=#{HOMEBREW_PREFIX}"
     end
@@ -129,11 +133,12 @@ class MacvimCustom < Formula
 
     libs = [
     ]
+    # FIXME : detect linked version
     libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.installed_version}.dylib" \
-      if lua.installed? && lua.name == "lua"
+      if lua && lua.name == "lua"
 
     libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.5.1.#{lua.installed_version}.dylib" \
-      if lua.installed? && lua.name == "luajit"
+      if lua && lua.name == "luajit"
 
     libs.each do |lib|
       newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
