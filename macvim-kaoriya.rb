@@ -2,10 +2,10 @@ require 'formula'
 
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
-  version '7.3.1223'
+  version '7.4a.009'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 'a36889cbe7026eb102daa2739e2e06b9d742a568'
+  sha1 'abc448877143bd125eff116aed573c538e0a4fb9'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
@@ -20,11 +20,11 @@ class MacvimKaoriya < Formula
   depends_on 'lua' => :optional
 
   def patches
-    patch_level = version.to_s.split('.').last.to_i
-    {
-      'p0' => (1224..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
-      'p1' => 'https://gist.github.com/pekepeke/5864150/raw/8e8949979509d7997713137e9ffe49f59522819c/macvim-kaoriya_luajit_v73.patch',
-    }
+    # patch_level = version.to_s.split('.').last.to_i
+    # {
+    #   'p0' => (10..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
+    #   # 'p1' => 'https://gist.github.com/pekepeke/5864150/raw/8e8949979509d7997713137e9ffe49f59522819c/macvim-kaoriya_luajit_v73.patch',
+    # }
   end
 
 
@@ -47,21 +47,17 @@ class MacvimKaoriya < Formula
     opts = []
 
     lua = nil
-    with_lua = false
     if build.include? 'with-luajit'
-      opts << "--with-luajit"
-
       lua = Formula.factory('luajit')
-      with_lua = true
     elsif build.include? "--with-lua"
       lua = Formula.factory('lua')
-      with_lua = true
     end
 
-    if with_lua
-      opts << '--enable-luainterp'
-      opts << "--with-lua-prefix=#{HOMEBREW_PREFIX}"
-    end
+    # if with_lua
+    #   opts << '--enable-luainterp'
+    #   # opts << "--with-lua-prefix=#{HOMEBREW_PREFIX}"
+    #   opts << "--with-lua-prefix=#{lua.installed_prefix}"
+    # end
 
     if build.include? "icon-beautify"
       curl "http://cl.ly/0f18090S3d2W/download/MacVim.icns", "--output", "src/MacVim/icons/MacVim.icns"
@@ -78,6 +74,10 @@ class MacvimKaoriya < Formula
       '--enable-python3interp=dynamic',
       '--enable-rubyinterp=dynamic',
       '--enable-ruby19interp=dynamic',
+      '--enable-luainterp=dynamic',
+      '--with-lua-prefix=/usr/local',
+      '--enable-lua52interp=dynamic',
+      '--with-lua52-prefix=/usr/local/Cellar/lua52/5.2.1',
       *opts
 
     `rm src/po/ja.sjis.po`
@@ -102,6 +102,7 @@ class MacvimKaoriya < Formula
 
     app = prefix + 'MacVim.app/Contents'
     macos = app + 'MacOS'
+    vimdir = app + 'Resources/vim'
     runtime = app + 'Resources/vim/runtime'
 
     macos.install 'src/MacVim/mvim'
@@ -126,13 +127,6 @@ class MacvimKaoriya < Formula
       "#{HOMEBREW_PREFIX}/lib/libmigemo.1.1.0.dylib",
     ]
 
-    # FIXME : detect linked version
-    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.installed_version}.dylib" \
-      if lua && lua.name == "lua"
-
-    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}-5.1.#{lua.installed_version}.dylib" \
-      if lua && lua.name == "luajit"
-
     libs.each do |lib|
       newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
       system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
@@ -152,5 +146,25 @@ class MacvimKaoriya < Formula
     newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
     system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
     cp lib, app + 'Frameworks'
+
+    luadylib = nil
+    if lua && lua.name == "lua"
+      luadylib = "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.installed_version}.dylib"
+    elsif lua && lua.name == "luajit"
+      luadylib = "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}-5.1.#{lua.installed_version}.dylib"
+    else
+      luadylib = "#{HOMEBREW_PREFIX}/lib/libluajit-5.1.#{luajit}.dylib"
+    end
+
+    if luadylib
+      cp luadylib, frameworks if File.exist? luadylib
+    # File.open(vimdir + 'vimrc', 'a').write <<EOL
+# let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
+# EOL
+    File.open(vimdir + 'vimrc', 'r+').write <<EOL
+let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
+#{File.open(vimdir + 'vimrc').read}
+EOL
+    end
   end
 end

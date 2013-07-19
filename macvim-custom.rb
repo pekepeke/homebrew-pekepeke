@@ -3,8 +3,8 @@ require 'formula'
 class MacvimCustom < Formula
   homepage 'http://code.google.com/p/macvim/'
   url 'https://github.com/b4winckler/macvim.git'
-  version '7.3.1193'
-  sha1 '946e2197253adb92fceef3fa9296c7b11ec41a1d'
+  version '7.4a.035'
+  sha1 '606fa884da3a2cc966a41a2a8904c16f46beec77'
 
   head 'https://github.com/b4winckler/macvim.git', :branch => 'master'
 
@@ -23,8 +23,8 @@ class MacvimCustom < Formula
   def patches
     patch_level = version.to_s.split('.').last.to_i
     {
-      'p0' => (1194..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
-      'p1' => 'https://gist.github.com/pekepeke/5794705/raw/bae53f52cbaeb3f8b0d82b8a6fa3891c7ee97859/macvim_luajit_v73.patch',
+      # 'p0' => (1194..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
+      'p1' => 'https://gist.github.com/pekepeke/6017048/raw/fc01c3528005ac13b1523444bf6ae266dc63e596/macvim_luajit_v74a.patch',
       # 'p1' => 'https://gist.github.com/pekepeke/5755279/raw/e6dc238aabd73bf8507f8d13c455b899d7094e0b/macvim_luajit_v73_1148.diff',
     }
   end
@@ -137,7 +137,7 @@ class MacvimCustom < Formula
     libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.installed_version}.dylib" \
       if lua && lua.name == "lua"
 
-    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.5.1.#{lua.installed_version}.dylib" \
+    libs << "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}-5.1.#{lua.installed_version}.dylib" \
       if lua && lua.name == "luajit"
 
     libs.each do |lib|
