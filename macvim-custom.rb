@@ -3,8 +3,8 @@ require 'formula'
 class MacvimCustom < Formula
   homepage 'http://code.google.com/p/macvim/'
   url 'https://github.com/b4winckler/macvim.git'
-  version '7.4a.035'
-  sha1 '606fa884da3a2cc966a41a2a8904c16f46beec77'
+  version '7.4b.000'
+  sha1 '864d43f7981c832ede38b4d71445ae62bf6ca3a4'
 
   head 'https://github.com/b4winckler/macvim.git', :branch => 'master'
 
@@ -24,8 +24,7 @@ class MacvimCustom < Formula
     patch_level = version.to_s.split('.').last.to_i
     {
       # 'p0' => (1194..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
-      'p1' => 'https://gist.github.com/pekepeke/6017048/raw/fc01c3528005ac13b1523444bf6ae266dc63e596/macvim_luajit_v74a.patch',
-      # 'p1' => 'https://gist.github.com/pekepeke/5755279/raw/e6dc238aabd73bf8507f8d13c455b899d7094e0b/macvim_luajit_v73_1148.diff',
+      # 'p1' => 'https://gist.github.com/pekepeke/6017048/raw/fc01c3528005ac13b1523444bf6ae266dc63e596/macvim_luajit_v74a.patch',
     }
   end
 
