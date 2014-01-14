@@ -83,7 +83,7 @@ class MacvimKaoriya < Formula
     `rm src/po/ja.sjis.po`
     `touch src/po/ja.sjis.po`
 
-    gettext = "#{Formula.factory('gettext-mk').prefix}/bin/"
+    gettext = "#{Formula.factory('gettext-mk').installed_prefix}/bin/"
     inreplace 'src/po/Makefile' do |s|
       s.gsub! /^(MSGFMT\s*=.*)(msgfmt.*)/, "\\1#{gettext}\\2"
       s.gsub! /^(XGETTEXT\s*=.*)(xgettext.*)/, "\\1#{gettext}\\2"
@@ -91,7 +91,7 @@ class MacvimKaoriya < Formula
     end
 
     inreplace 'src/auto/config.mk' do |s|
-      # s.gsub! "-L#{Formula.factory('readline').prefix}/lib", ''
+      # s.gsub! "-L#{Formula.factory('readline').installed_prefix}/lib", ''
       s.gsub! "-L#{HOMEBREW_PREFIX}/Cellar/readline/6.2.2/lib", ''
     end
 
