@@ -2,10 +2,10 @@ require 'formula'
 
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
-  version '7.4a.009'
+  version '7.4.133'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 'abc448877143bd125eff116aed573c538e0a4fb9'
+  sha1 '6941ea4971d03acd5a405af3995dd3c81e02d58d'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
@@ -25,17 +25,23 @@ class MacvimKaoriya < Formula
     #   'p0' => (10..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
     #   # 'p1' => 'https://gist.github.com/pekepeke/5864150/raw/8e8949979509d7997713137e9ffe49f59522819c/macvim-kaoriya_luajit_v73.patch',
     # }
+    {
+      :p1 => [
+        'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/98482edd59b30091f30371dcadad4e3ffcc132be/vim-7.4.035-breakindent.patch',
+        'https://bitbucket.org/koron/vim-kaoriya-patches/raw/6658116d59073a4471a83fea41a0791718773a96/X010-autoload_cache.diff',
+        # 'https://gist.github.com/Shougo/5654189/raw'
+      ]
+    }
   end
 
 
   def install
+    ENV["HOMEBREW_OPTFLAGS"] = "-march=core2" if build.with? 'binary-release'
     ENV.remove_macosxsdk
-    ENV.macosxsdk '10.7'
-    ENV.append 'MACOSX_DEPLOYMENT_TARGET', '10.7'
-    # ENV.append 'CFLAGS', '-mmacosx-version-min=10.7'
-    # ENV.append 'LDFLAGS', '-mmacosx-version-min=10.7 -headerpad_max_install_names'
-    ENV.append 'CFLAGS', "-mmacosx-version-min=10.7 -I#{HOMEBREW_PREFIX}/opt/gettext-mk/include"
-    ENV.append 'LDFLAGS', "-mmacosx-version-min=10.7 -headerpad_max_install_names -L#{HOMEBREW_PREFIX}/opt/gettext-mk/lib"
+    ENV.macosxsdk '10.8'
+    ENV.append 'MACOSX_DEPLOYMENT_TARGET', '10.8'
+    ENV.append 'CFLAGS', "-mmacosx-version-min=10.8 -I#{HOMEBREW_PREFIX}/opt/gettext-mk/include"
+    ENV.append 'LDFLAGS', "-mmacosx-version-min=10.8 -headerpad_max_install_names -L#{HOMEBREW_PREFIX}/opt/gettext-mk/lib"
     ENV.append 'VERSIONER_PERL_VERSION', '5.12'
     ENV.append 'VERSIONER_PYTHON_VERSION', '2.7'
     ENV.append 'vi_cv_path_perl', '/usr/bin/perl'
@@ -49,15 +55,9 @@ class MacvimKaoriya < Formula
     lua = nil
     if build.include? 'with-luajit'
       lua = Formula.factory('luajit')
-    elsif build.include? "--with-lua"
+    elsif build.include? "with-lua"
       lua = Formula.factory('lua')
     end
-
-    # if with_lua
-    #   opts << '--enable-luainterp'
-    #   # opts << "--with-lua-prefix=#{HOMEBREW_PREFIX}"
-    #   opts << "--with-lua-prefix=#{lua.installed_prefix}"
-    # end
 
     if build.include? "icon-beautify"
       curl "http://cl.ly/0f18090S3d2W/download/MacVim.icns", "--output", "src/MacVim/icons/MacVim.icns"
@@ -134,15 +134,15 @@ class MacvimKaoriya < Formula
     end
 
     lib = "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib"
-    begin
-      safe_system "otool -L #{macos + 'Vim'} | grep #{lib}"
-    rescue ErrorDuringExecution => e
-      gettext = Formula.factory('gettext')
-      if gettext.installed?
-        # overrides homebrew gettext
-        lib = "#{HOMEBREW_PREFIX}/lib/libintl.8.dylib"
-      end
-    end
+    # begin
+    #   safe_system "otool -L #{macos + 'Vim'} | grep #{lib}"
+    # rescue ErrorDuringExecution => e
+    #   gettext = Formula.factory('gettext')
+    #   if gettext.installed?
+    #     # overrides homebrew gettext
+    #     lib = "#{Formula.factory('gettext').installed_prefix}/lib/libintl.8.dylib"
+    #   end
+    # end
     newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
     system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
     cp lib, app + 'Frameworks'
@@ -152,12 +152,12 @@ class MacvimKaoriya < Formula
       luadylib = "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}.#{lua.installed_version}.dylib"
     elsif lua && lua.name == "luajit"
       luadylib = "#{HOMEBREW_PREFIX}/lib/lib#{lua.name}-5.1.#{lua.installed_version}.dylib"
-    else
-      luadylib = "#{HOMEBREW_PREFIX}/lib/libluajit-5.1.#{luajit}.dylib"
+    elsif lua
+      luadylib = "#{HOMEBREW_PREFIX}/lib/libluajit-5.1.#{lua.installed_version}.dylib"
     end
 
     if luadylib
-      cp luadylib, frameworks if File.exist? luadylib
+      cp luadylib, app + 'Frameworks' if File.exist? luadylib
     # File.open(vimdir + 'vimrc', 'a').write <<EOL
 # let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
 # EOL
