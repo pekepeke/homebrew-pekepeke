@@ -1,10 +1,14 @@
 require 'formula'
 
 class MacvimCustom < Formula
+  class << self
+    def sha1_version(ver); @@sha1_version = ver; end
+  end
   homepage 'http://code.google.com/p/macvim/'
   url 'https://github.com/b4winckler/macvim.git'
-  version '7.4b.000'
-  sha1 '864d43f7981c832ede38b4d71445ae62bf6ca3a4'
+  version '7.4.103'
+  sha1 '5428a4b68400808be0f2dbed513dee04597bced7'
+  sha1_version 103
 
   head 'https://github.com/b4winckler/macvim.git', :branch => 'master'
 
@@ -23,8 +27,13 @@ class MacvimCustom < Formula
   def patches
     patch_level = version.to_s.split('.').last.to_i
     {
-      # 'p0' => (1194..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
+      # 'p0' => ((@@sha1_version + 1)..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.4/7.4.%03d' % i },
       # 'p1' => 'https://gist.github.com/pekepeke/6017048/raw/fc01c3528005ac13b1523444bf6ae266dc63e596/macvim_luajit_v74a.patch',
+      :p1 => [
+        'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/98482edd59b30091f30371dcadad4e3ffcc132be/vim-7.4.035-breakindent.patch',
+        'https://bitbucket.org/koron/vim-kaoriya-patches/raw/6658116d59073a4471a83fea41a0791718773a96/X010-autoload_cache.diff',
+        'https://gist.github.com/Shougo/5654189/raw',
+      ]
     }
   end
 
@@ -47,8 +56,8 @@ class MacvimCustom < Formula
     ENV.append 'vi_cv_path_perl', '/usr/bin/perl'
     ENV.append 'vi_cv_path_python', '/usr/bin/python'
     ENV.append 'vi_cv_path_ruby', '/usr/bin/ruby'
-    ENV.append 'vi_cv_path_python3', "#{HOMEBREW_PREFIX}/bin/python3"
-    ENV.append 'vi_cv_path_ruby19', "#{HOMEBREW_PREFIX}/bin/ruby19"
+    # ENV.append 'vi_cv_path_python3', "#{HOMEBREW_PREFIX}/bin/python3"
+    # ENV.append 'vi_cv_path_ruby19', "#{HOMEBREW_PREFIX}/bin/ruby19"
 
     args = %W[
       --with-features=huge
@@ -60,7 +69,6 @@ class MacvimCustom < Formula
       --enable-perlinterp=dynamic
       --enable-pythoninterp=dynamic
       --enable-rubyinterp=dynamic
-      --with-ruby-command=#{RUBY_PATH}
     ]
       # --enable-perlinterp=dynamic
       # --enable-perlinterp
@@ -93,16 +101,16 @@ class MacvimCustom < Formula
       args << "--enable-python3interp"
     end
 
-    inreplace 'src/if_perl.xs' do |s|
-      s.sub! /^(#define close_dll dlclose)/, <<-EOS
-\\1
-# if defined(MACOS_X_UNIX)
-# define DYNAMIC_PERL_DLL "/System/Library/Perl/lib/5.10/libperl.dylib"
-# else
-# define DYNAMIC_PERL_DLL "libperl.so"
-# endif
-      EOS
-    end
+#     inreplace 'src/if_perl.xs' do |s|
+#       s.sub! /^(#define close_dll dlclose)/, <<-EOS
+# \\1
+# # if defined(MACOS_X_UNIX)
+# # define DYNAMIC_PERL_DLL "/System/Library/Perl/lib/5.10/libperl.dylib"
+# # else
+# # define DYNAMIC_PERL_DLL "libperl.so"
+# # endif
+#       EOS
+#     end
     system "./configure", *args
 
     # Building custom icons fails for many users, so off by default.
