@@ -1,11 +1,16 @@
 require 'formula'
 
+class CMapResources < Formula
+  url 'http://jaist.dl.sourceforge.net/project/cmap.adobe/cmapresources_japan1-6.tar.z'
+  sha1 '9467d7ed73c16856d2a49b5897fc5ea477f3a111'
+end
+
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
-  version '7.4.133'
+  version '7.4.258'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '6941ea4971d03acd5a405af3995dd3c81e02d58d'
+  sha1 '29eccd4bf985a94652a9e93163e8074df06e7425'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
@@ -27,9 +32,9 @@ class MacvimKaoriya < Formula
     # }
     {
       :p1 => [
-        'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/98482edd59b30091f30371dcadad4e3ffcc132be/vim-7.4.035-breakindent.patch',
+        'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/f8c3f9f5de704bc74a9d61fc633ecd2266b10d0a/vim-7.4.178-breakindent.patch',
         'https://bitbucket.org/koron/vim-kaoriya-patches/raw/6658116d59073a4471a83fea41a0791718773a96/X010-autoload_cache.diff',
-        # 'https://gist.github.com/Shougo/5654189/raw'
+        'https://gist.github.com/Shougo/5654189/raw'
       ]
     }
   end
@@ -123,17 +128,10 @@ class MacvimKaoriya < Formula
       cp f, dict
     end
 
-    libs = [
-      "#{HOMEBREW_PREFIX}/lib/libmigemo.1.1.0.dylib",
-    ]
-
-    libs.each do |lib|
-      newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
-      system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
-      cp lib, app + 'Frameworks'
+    CMapResources.new.brew do
+      cp 'CMap/UniJIS-UTF8-H', runtime/'print/UniJIS-UTF8-H.ps'
     end
 
-    lib = "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib"
     # begin
     #   safe_system "otool -L #{macos + 'Vim'} | grep #{lib}"
     # rescue ErrorDuringExecution => e
@@ -143,9 +141,16 @@ class MacvimKaoriya < Formula
     #     lib = "#{Formula.factory('gettext').installed_prefix}/lib/libintl.8.dylib"
     #   end
     # end
-    newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
-    system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
-    cp lib, app + 'Frameworks'
+
+    libs = [
+      "#{HOMEBREW_PREFIX}/lib/libmigemo.1.dylib",
+      "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib"
+    ]
+    libs.each do |lib|
+      newname = "@executable_path/../Frameworks/#{File.basename(lib)}"
+      system "install_name_tool -change #{lib} #{newname} #{macos + 'Vim'}"
+      cp lib, app + 'Frameworks'
+    end
 
     luadylib = nil
     if lua && lua.name == "lua"
