@@ -3,14 +3,16 @@ require 'formula'
 class CMapResources < Formula
   url 'http://jaist.dl.sourceforge.net/project/cmap.adobe/cmapresources_japan1-6.tar.z'
   sha1 '9467d7ed73c16856d2a49b5897fc5ea477f3a111'
+  version '1.6'
 end
 
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
-  version '7.4.258'
+  # https://github.com/splhack/macvim/blob/master/src/version.c
+  version '7.4.383'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '29eccd4bf985a94652a9e93163e8074df06e7425'
+  sha1 'df30e88d0520fbcfbb105f3f9a4a85e07ea37c85'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
@@ -32,7 +34,7 @@ class MacvimKaoriya < Formula
     # }
     {
       :p1 => [
-        'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/f8c3f9f5de704bc74a9d61fc633ecd2266b10d0a/vim-7.4.178-breakindent.patch',
+        # 'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/f8c3f9f5de704bc74a9d61fc633ecd2266b10d0a/vim-7.4.178-breakindent.patch',
         'https://bitbucket.org/koron/vim-kaoriya-patches/raw/6658116d59073a4471a83fea41a0791718773a96/X010-autoload_cache.diff',
         'https://gist.github.com/Shougo/5654189/raw'
       ]
@@ -95,10 +97,10 @@ class MacvimKaoriya < Formula
       s.gsub! /^(MSGMERGE\s*=.*)(msgmerge.*)/, "\\1#{gettext}\\2"
     end
 
-    inreplace 'src/auto/config.mk' do |s|
-      # s.gsub! "-L#{Formula.factory('readline').installed_prefix}/lib", ''
-      s.gsub! "-L#{HOMEBREW_PREFIX}/Cellar/readline/6.2.2/lib", ''
-    end
+    # inreplace 'src/auto/config.mk' do |s|
+    #   # s.gsub! "-L#{Formula.factory('readline').installed_prefix}/lib", ''
+    #   s.gsub! "-L#{HOMEBREW_PREFIX}/Cellar/readline/6.2.2/lib", ''
+    # end
 
     Dir.chdir('src/po') {system 'make'}
     system 'make'
@@ -106,9 +108,13 @@ class MacvimKaoriya < Formula
     prefix.install 'src/MacVim/build/Release/MacVim.app'
 
     app = prefix + 'MacVim.app/Contents'
+    frameworks = app + 'Frameworks'
     macos = app + 'MacOS'
     vimdir = app + 'Resources/vim'
-    runtime = app + 'Resources/vim/runtime'
+    runtime = vimdir + 'runtime'
+    docja = vimdir + 'plugins/vimdoc-ja/doc'
+
+    system "#{macos + 'Vim'} -c 'helptags #{docja}' -c q"
 
     macos.install 'src/MacVim/mvim'
     mvim = macos + 'mvim'
@@ -128,7 +134,8 @@ class MacvimKaoriya < Formula
       cp f, dict
     end
 
-    CMapResources.new.brew do
+    # CMapResources.new.brew do
+    Formulary.factory("c_map_resources", "stable").brew do
       cp 'CMap/UniJIS-UTF8-H', runtime/'print/UniJIS-UTF8-H.ps'
     end
 
