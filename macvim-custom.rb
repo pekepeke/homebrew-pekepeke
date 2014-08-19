@@ -30,7 +30,7 @@ class MacvimCustom < Formula
       # 'p0' => ((@@sha1_version + 1)..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.4/7.4.%03d' % i },
       # 'p1' => 'https://gist.github.com/pekepeke/6017048/raw/fc01c3528005ac13b1523444bf6ae266dc63e596/macvim_luajit_v74a.patch',
       :p1 => [
-        'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/98482edd59b30091f30371dcadad4e3ffcc132be/vim-7.4.035-breakindent.patch',
+        # 'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/f8c3f9f5de704bc74a9d61fc633ecd2266b10d0a/vim-7.4.178-breakindent.patch',
         'https://bitbucket.org/koron/vim-kaoriya-patches/raw/6658116d59073a4471a83fea41a0791718773a96/X010-autoload_cache.diff',
         'https://gist.github.com/Shougo/5654189/raw',
       ]
