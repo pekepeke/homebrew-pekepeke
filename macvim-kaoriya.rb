@@ -178,5 +178,6 @@ let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
 #{File.open(vimdir + 'vimrc').read}
 EOL
     end
+    system "defaults write org.vim.MacVim NSAppSleepDisabled -bool YES"
   end
 end
