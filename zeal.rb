@@ -2,9 +2,9 @@ require "formula"
 
 class Zeal < Formula
   homepage "http://zealdocs.org/"
-  version '0.0.0'
+  version '0.0.0-a40d15c1e6'
   url "https://github.com/jkozera/zeal.git"
-  sha1 "6e3feb617d5ef02bd77d3aea43b209aef1ac7dc0"
+  sha1 "a40d15c1e661f723a58708a14184e6254e1b1984"
   head "https://github.com/jkozera/zeal.git"
 
   # depends_on "cmake" => :build
