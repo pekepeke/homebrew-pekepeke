@@ -86,7 +86,6 @@ class MacvimKaoriya < Formula
 
     gettext = "#{Formula.factory('gettext-mk').installed_prefix}/bin/"
     inreplace 'src/po/Makefile' do |s|
-      s.gsub! /^(MSGFMT\s*=.*)(msgfmt.*)/, "\\1#{gettext}\\2"
       s.gsub! /^(XGETTEXT\s*=.*)(xgettext.*)/, "\\1#{gettext}\\2"
       s.gsub! /^(MSGMERGE\s*=.*)(msgmerge.*)/, "\\1#{gettext}\\2"
     end
