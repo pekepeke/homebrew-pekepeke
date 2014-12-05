@@ -1,18 +1,12 @@
 require 'formula'
 
-class CMapResources < Formula
-  url 'http://jaist.dl.sourceforge.net/project/cmap.adobe/cmapresources_japan1-6.tar.z'
-  sha1 '9467d7ed73c16856d2a49b5897fc5ea477f3a111'
-  version '1.6'
-end
-
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
   # https://github.com/splhack/macvim/blob/master/src/version.c
-  version '7.4.383'
+  version '7.4.527'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 'df30e88d0520fbcfbb105f3f9a4a85e07ea37c85'
+  sha1 '5f175afd29d2c7bea26e19f7a75bc658aa7b06d7'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
@@ -134,11 +128,6 @@ class MacvimKaoriya < Formula
       cp f, dict
     end
 
-    # CMapResources.new.brew do
-    Formulary.factory("c_map_resources", "stable").brew do
-      cp 'CMap/UniJIS-UTF8-H', runtime/'print/UniJIS-UTF8-H.ps'
-    end
-
     # begin
     #   safe_system "otool -L #{macos + 'Vim'} | grep #{lib}"
     # rescue ErrorDuringExecution => e
@@ -177,6 +166,11 @@ class MacvimKaoriya < Formula
 let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
 #{File.open(vimdir + 'vimrc').read}
 EOL
+    end
+    # CMapResources.new.brew do
+    resource("CMapResources") do
+      url 'http://jaist.dl.sourceforge.net/project/cmap.adobe/cmapresources_japan1-6.tar.z'
+      sha1 '9467d7ed73c16856d2a49b5897fc5ea477f3a111'
     end
     system "defaults write org.vim.MacVim NSAppSleepDisabled -bool YES"
   end
