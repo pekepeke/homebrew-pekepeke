@@ -137,6 +137,11 @@ class MacvimKaoriya < Formula
     #   end
     # end
 
+    # CMapResources.new.brew do
+    resource("CMapResources").stage do
+      cp 'CMap/UniJIS-UTF8-H', runtime/'print/UniJIS-UTF8-H.ps'
+    end
+
     libs = [
       "#{HOMEBREW_PREFIX}/lib/libmigemo.1.dylib",
       "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib"
@@ -166,11 +171,11 @@ let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
 #{File.open(vimdir + 'vimrc').read}
 EOL
     end
-    # CMapResources.new.brew do
-    resource("CMapResources") do
-      url 'http://jaist.dl.sourceforge.net/project/cmap.adobe/cmapresources_japan1-6.tar.z'
-      sha1 '9467d7ed73c16856d2a49b5897fc5ea477f3a111'
-    end
     system "defaults write org.vim.MacVim NSAppSleepDisabled -bool YES"
+  end
+
+  resource("CMapResources") do
+    url 'http://jaist.dl.sourceforge.net/project/cmap.adobe/cmapresources_japan1-6.tar.z'
+    sha1 '9467d7ed73c16856d2a49b5897fc5ea477f3a111'
   end
 end
