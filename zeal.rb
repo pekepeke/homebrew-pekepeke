@@ -2,10 +2,13 @@ require "formula"
 
 class Zeal < Formula
   homepage "http://zealdocs.org/"
-  version '0.0.0-aaa5dff857'
   url "https://github.com/jkozera/zeal.git"
-  sha1 "aaa5dff85772921fc91397aa449e0f5316334506"
   head "https://github.com/jkozera/zeal.git"
+
+  # version '0.0.0-0af21694d9'
+  # sha1 "0af21694d91537e8917cbd2fde9fcab7804538b6"
+  version '0.0.0-aaa5dff857'
+  sha1 "aaa5dff85772921fc91397aa449e0f5316334506"
 
   # depends_on "cmake" => :build
   depends_on "qt5"
@@ -17,8 +20,12 @@ class Zeal < Formula
     ENV.append 'LDLAGS', '-L#{qt5.installed_prefix}/lib'
 
     Dir.chdir('zeal') do
+      # system "sed -i -e 's!unix:sources!# !' 3rdparty/qxtglobalshortcut/qxtglobalshortcut.pri"
       curl "https://github.com/pekepeke/osx_library/raw/master/tools/ApplicationIcons/zeal.icns", '--output', "zeal.icns"
       system 'echo "ICON = zeal.icns" >> zeal.pro'
+      # system 'echo "config += create_prl" >> zeal.pro'
+      # system 'echo "config += link_prl" >> zeal.pro'
+
       system "#{qt5.installed_prefix}/bin/qmake"
       # Remove unrecognized options if warned by configure
       # system "./configure", "--disable-debug",
