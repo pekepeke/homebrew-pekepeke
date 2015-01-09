@@ -119,7 +119,8 @@ class MacvimKaoriya < Formula
       s.gsub! /^(binary=).*/, "\\1\"`(cd \"$VIM_APP_DIR/MacVim.app/Contents/MacOS\"; pwd -P)`/Vim\""
     end
 
-    cp "#{HOMEBREW_PREFIX}/bin/ctags", macos
+    cp "#{Formula.factory('ctags-objc-ja').installed_prefix}/bin/ctags", macos
+    # cp "#{HOMEBREW_PREFIX}/bin/ctags", macos
 
     dict = runtime + 'dict'
     mkdir_p dict
