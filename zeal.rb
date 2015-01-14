@@ -2,13 +2,13 @@ require "formula"
 
 class Zeal < Formula
   homepage "http://zealdocs.org/"
-  url "https://github.com/jkozera/zeal.git"
-  head "https://github.com/jkozera/zeal.git"
+  url "https://github.com/zealdocs/zeal.git"
+  head "https://github.com/zealdocs/zeal.git"
 
   # version '0.0.0-0af21694d9'
   # sha1 "0af21694d91537e8917cbd2fde9fcab7804538b6"
-  version '0.0.0-aaa5dff857'
-  sha1 "aaa5dff85772921fc91397aa449e0f5316334506"
+  version '0.0.0-2b5c327236'
+  sha1 "2b5c32723616e9b6c23383baf3f9ab127e1073c5"
 
   # depends_on "cmake" => :build
   depends_on "qt5"
@@ -19,23 +19,25 @@ class Zeal < Formula
     ENV.append 'CFLAGS', '-I#{qt5.installed_prefix}/include'
     ENV.append 'LDLAGS', '-L#{qt5.installed_prefix}/lib'
 
-    Dir.chdir('zeal') do
-      # system "sed -i -e 's!unix:sources!# !' 3rdparty/qxtglobalshortcut/qxtglobalshortcut.pri"
-      curl "https://github.com/pekepeke/osx_library/raw/master/tools/ApplicationIcons/zeal.icns", '--output', "zeal.icns"
-      system 'echo "ICON = zeal.icns" >> zeal.pro'
-      # system 'echo "config += create_prl" >> zeal.pro'
-      # system 'echo "config += link_prl" >> zeal.pro'
+    # Dir.chdir('zeal') do
+    # system "sed -i -e 's!unix:sources!# !' 3rdparty/qxtglobalshortcut/qxtglobalshortcut.pri"
+    curl "https://github.com/pekepeke/osx_library/raw/master/tools/ApplicationIcons/zeal.icns", '--output', "zeal.icns"
+    system 'echo "ICON = zeal.icns" >> zeal.pro'
+    # system 'echo "config += create_prl" >> zeal.pro'
+    # system 'echo "config += link_prl" >> zeal.pro'
 
-      system "#{qt5.installed_prefix}/bin/qmake"
-      # Remove unrecognized options if warned by configure
-      # system "./configure", "--disable-debug",
-      #                       "--disable-dependency-tracking",
-      #                       "--disable-silent-rules",
-      #                       "--prefix=#{prefix}"
-      # system "cmake", ".", *std_cmake_args
-      system "make"
-      prefix.install "zeal.app"
-    end
+    system "#{qt5.installed_prefix}/bin/qmake"
+    # Remove unrecognized options if warned by configure
+    # system "./configure", "--disable-debug",
+    #                       "--disable-dependency-tracking",
+    #                       "--disable-silent-rules",
+    #                       "--prefix=#{prefix}"
+    # system "cmake", ".", *std_cmake_args
+    system "make"
+    system "#{qt5.installed_prefix}/bin/macdeployqt src/zeal.app"
+    # system "#{qt5.installed_prefix}/bin/macdeployqt src/zeal.app --dmg"
+    prefix.install "src/zeal.app"
+    # end
   end
 
   # test do
