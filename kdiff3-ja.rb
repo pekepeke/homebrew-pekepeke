@@ -31,6 +31,7 @@ class Kdiff3Ja < Formula
       system "qmake", "kdiff3.pro"
       system "qmake", "-spec", "macx-xcode", "kdiff3.pro"
       system "make"
+      system "macdeployqt" "kdiff3.app"
       prefix.install "kdiff3.app"
     end
 
