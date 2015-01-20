@@ -7,8 +7,8 @@ class Zeal < Formula
 
   # version '0.0.0-0af21694d9'
   # sha1 "0af21694d91537e8917cbd2fde9fcab7804538b6"
-  version '0.0.0-2b5c327236'
-  sha1 "2b5c32723616e9b6c23383baf3f9ab127e1073c5"
+  version '0.0.0-e66ded694d'
+  sha1 "e66ded694db8fbb09d1a4f9bd51d32ae2148a9a1"
 
   # depends_on "cmake" => :build
   depends_on "qt5"
@@ -34,9 +34,12 @@ class Zeal < Formula
     #                       "--prefix=#{prefix}"
     # system "cmake", ".", *std_cmake_args
     system "make"
-    system "#{qt5.installed_prefix}/bin/macdeployqt src/zeal.app"
+    system "#{qt5.installed_prefix}/bin/macdeployqt", "src/zeal.app", "-dmg"
+    system "ls"
+    system "ls src"
     # system "#{qt5.installed_prefix}/bin/macdeployqt src/zeal.app --dmg"
     prefix.install "src/zeal.app"
+    prefix.install "src/zeal.dmg"
     # end
   end
 
