@@ -7,6 +7,7 @@ class CmigemoMk < Formula
   version '1.3'
 
   depends_on 'nkf' => :build
+  keg_only "This module for macvim-kaoriya"
 
   def patches
     DATA

@@ -37,12 +37,14 @@ class MacvimKaoriya < Formula
 
 
   def install
+    cmigemo = Formula.factory('cmigemo-mk')
+
     ENV["HOMEBREW_OPTFLAGS"] = "-march=core2" if build.with? 'binary-release'
     ENV.remove_macosxsdk
     ENV.macosxsdk '10.8'
     ENV.append 'MACOSX_DEPLOYMENT_TARGET', '10.8'
-    ENV.append 'CFLAGS', "-mmacosx-version-min=10.8 -I#{HOMEBREW_PREFIX}/opt/gettext-mk/include"
-    ENV.append 'LDFLAGS', "-mmacosx-version-min=10.8 -headerpad_max_install_names -L#{HOMEBREW_PREFIX}/opt/gettext-mk/lib"
+    ENV.append 'CFLAGS', "-mmacosx-version-min=10.8 -I#{HOMEBREW_PREFIX}/opt/gettext-mk/include -I#{cmigemo.installed_prefix}/include"
+    ENV.append 'LDFLAGS', "-mmacosx-version-min=10.8 -headerpad_max_install_names -L#{HOMEBREW_PREFIX}/opt/gettext-mk/lib -L#{cmigemo.installed_prefix}/lib"
     ENV.append 'VERSIONER_PERL_VERSION', '5.12'
     ENV.append 'VERSIONER_PYTHON_VERSION', '2.7'
     ENV.append 'vi_cv_path_perl', '/usr/bin/perl'
@@ -124,7 +126,7 @@ class MacvimKaoriya < Formula
 
     dict = runtime + 'dict'
     mkdir_p dict
-    Dir.glob("#{HOMEBREW_PREFIX}/share/migemo/utf-8/*").each do |f|
+    Dir.glob("#{cmigemo.installed_prefix}/share/migemo/utf-8/*").each do |f|
       cp f, dict
     end
 
@@ -144,7 +146,7 @@ class MacvimKaoriya < Formula
     end
 
     libs = [
-      "#{HOMEBREW_PREFIX}/lib/libmigemo.1.dylib",
+      "#{HOMEBREW_PREFIX}/opt/cmigemo-mk/lib/libmigemo.1.dylib",
       "#{HOMEBREW_PREFIX}/opt/gettext-mk/lib/libintl.8.dylib"
     ]
     libs.each do |lib|
