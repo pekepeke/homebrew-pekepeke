@@ -3,18 +3,18 @@ require 'formula'
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
   # https://github.com/splhack/macvim/blob/master/src/version.c
-  version '7.4.527'
+  version '7.4.619'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '5f175afd29d2c7bea26e19f7a75bc658aa7b06d7'
+  sha1 '739bff384e39ac4f3033edf555f7a3891abbb94d'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
   option "icon-beautify", "Build with icon(http://cl.ly/0f18090S3d2W/download/MacVim.icns)"
 
-  depends_on 'cmigemo-mk'
-  depends_on 'ctags-objc-ja'
-  depends_on 'gettext-mk'
+  depends_on 'cmigemo-mk' => :build
+  depends_on 'ctags-objc-ja' => :build
+  depends_on 'gettext-mk' => :build
   # depends_on 'lua'
 
   depends_on 'luajit' => :optional
