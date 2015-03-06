@@ -3,10 +3,10 @@ require 'formula'
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
   # https://github.com/splhack/macvim/blob/master/src/version.c
-  version '7.4.619'
+  version '7.4.648'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '739bff384e39ac4f3033edf555f7a3891abbb94d'
+  sha1 '2cb304e78bf53c42960218b00b9d8a2028566ac9'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
@@ -174,7 +174,6 @@ let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
 #{File.open(vimdir + 'vimrc').read}
 EOL
     end
-    system "defaults write org.vim.MacVim NSAppSleepDisabled -bool YES"
   end
 
   resource("CMapResources") do
