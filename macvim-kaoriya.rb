@@ -6,7 +6,7 @@ class MacvimKaoriya < Formula
   version '7.4.648'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '2cb304e78bf53c42960218b00b9d8a2028566ac9'
+  sha1 '5448d5cf8e044b6d9cbec809e9775f8d8ff1a658'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
