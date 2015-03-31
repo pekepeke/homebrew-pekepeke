@@ -7,22 +7,31 @@ class Zeal < Formula
 
   # version '0.0.0-0af21694d9'
   # sha1 "0af21694d91537e8917cbd2fde9fcab7804538b6"
-  version '0.0.0-e66ded694d'
-  sha1 "e66ded694db8fbb09d1a4f9bd51d32ae2148a9a1"
+  version '0.0.0-6e2e5b8d83'
+  sha1 "6e2e5b8d838844eed60e04aca3a9f8d1d091c631"
 
   # depends_on "cmake" => :build
   depends_on "qt5"
+  depends_on 'libarchive'
 
   def install
     qt5 = Formula.factory('qt5')
     # ENV.deparallelize  # if your formula fails when building in parallel
-    ENV.append 'CFLAGS', '-I#{qt5.installed_prefix}/include'
-    ENV.append 'LDLAGS', '-L#{qt5.installed_prefix}/lib'
+    ENV.append 'CFLAGS', "-I#{qt5.installed_prefix}/include -I#{HOMEBREW_PREFIX}/opt/libarchive/include"
+    ENV.append 'CXXFLAGS', "-I#{qt5.installed_prefix}/include -I#{HOMEBREW_PREFIX}/opt/libarchive/include"
+    ENV.append 'LDFLAGS', "-L#{qt5.installed_prefix}/lib -L#{HOMEBREW_PREFIX}/opt/libarchive/lib -larchive"
 
     # Dir.chdir('zeal') do
     # system "sed -i -e 's!unix:sources!# !' 3rdparty/qxtglobalshortcut/qxtglobalshortcut.pri"
     curl "https://github.com/pekepeke/osx_library/raw/master/tools/ApplicationIcons/zeal.icns", '--output', "zeal.icns"
     system 'echo "ICON = zeal.icns" >> zeal.pro'
+    # system 'echo "QMAKE_CXXFLAGS += $$(CXXFLAGS)" >> zeal.pro'
+    # system 'echo "QMAKE_CXXFLAGS += $$(CPPFLAGS)" >> zeal.pro'
+    system 'echo "QMAKE_CFLAGS += \$\$(CFLAGS)" >> src/src.pro'
+    system 'echo "QMAKE_CXXFLAGS += \$\$(CXXFLAGS)" >> src/src.pro'
+    system 'echo "QMAKE_LFLAGS += \$\$(LDFLAGS)" >> src/src.pro'
+    system "echo \"macx:INCLUDEPATH += #{HOMEBREW_PREFIX}/opt/libarchive/include\" >> src/src.pro"
+    system "echo \"macx:DEPENDPATH += #{HOMEBREW_PREFIX}/opt/libarchive/include\" >> src/src.pro"
     # system 'echo "config += create_prl" >> zeal.pro'
     # system 'echo "config += link_prl" >> zeal.pro'
 
@@ -34,12 +43,12 @@ class Zeal < Formula
     #                       "--prefix=#{prefix}"
     # system "cmake", ".", *std_cmake_args
     system "make"
-    system "#{qt5.installed_prefix}/bin/macdeployqt", "src/zeal.app", "-dmg"
-    system "ls"
-    system "ls src"
+    system "#{qt5.installed_prefix}/bin/macdeployqt", "bin/Zeal.app", "-dmg"
+    # system "ls"
+    # system "ls src"
     # system "#{qt5.installed_prefix}/bin/macdeployqt src/zeal.app --dmg"
-    prefix.install "src/zeal.app"
-    prefix.install "src/zeal.dmg"
+    prefix.install "bin/Zeal.app"
+    prefix.install "bin/Zeal.dmg"
     # end
   end
 
