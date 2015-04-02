@@ -23,10 +23,6 @@ class Zeal < Formula
 
     # Dir.chdir('zeal') do
     # system "sed -i -e 's!unix:sources!# !' 3rdparty/qxtglobalshortcut/qxtglobalshortcut.pri"
-    curl "https://github.com/pekepeke/osx_library/raw/master/tools/ApplicationIcons/zeal.icns", '--output', "zeal.icns"
-    system 'echo "ICON = zeal.icns" >> zeal.pro'
-    # system 'echo "QMAKE_CXXFLAGS += $$(CXXFLAGS)" >> zeal.pro'
-    # system 'echo "QMAKE_CXXFLAGS += $$(CPPFLAGS)" >> zeal.pro'
     system 'echo "QMAKE_CFLAGS += \$\$(CFLAGS)" >> src/src.pro'
     system 'echo "QMAKE_CXXFLAGS += \$\$(CXXFLAGS)" >> src/src.pro'
     system 'echo "QMAKE_LFLAGS += \$\$(LDFLAGS)" >> src/src.pro'
@@ -36,17 +32,8 @@ class Zeal < Formula
     # system 'echo "config += link_prl" >> zeal.pro'
 
     system "#{qt5.installed_prefix}/bin/qmake"
-    # Remove unrecognized options if warned by configure
-    # system "./configure", "--disable-debug",
-    #                       "--disable-dependency-tracking",
-    #                       "--disable-silent-rules",
-    #                       "--prefix=#{prefix}"
-    # system "cmake", ".", *std_cmake_args
     system "make"
     system "#{qt5.installed_prefix}/bin/macdeployqt", "bin/Zeal.app", "-dmg"
-    # system "ls"
-    # system "ls src"
-    # system "#{qt5.installed_prefix}/bin/macdeployqt src/zeal.app --dmg"
     prefix.install "bin/Zeal.app"
     prefix.install "bin/Zeal.dmg"
     # end
