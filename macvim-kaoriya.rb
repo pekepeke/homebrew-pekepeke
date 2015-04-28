@@ -3,10 +3,10 @@ require 'formula'
 class MacvimKaoriya < Formula
   homepage 'http://code.google.com/p/macvim-kaoriya/'
   # https://github.com/splhack/macvim/blob/master/src/version.c
-  version '7.4.648'
+  version '7.4.712'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '5448d5cf8e044b6d9cbec809e9775f8d8ff1a658'
+  sha1 '09dcabff061008ea547aa56acb5b2c035e5910cf'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
