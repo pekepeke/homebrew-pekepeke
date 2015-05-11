@@ -1,12 +1,12 @@
 require 'formula'
 
 class MacvimKaoriya < Formula
-  homepage 'http://code.google.com/p/macvim-kaoriya/'
+  homepage 'https://github.com/splhack/macvim-kaoriya'
   # https://github.com/splhack/macvim/blob/master/src/version.c
   version '7.4.712'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '09dcabff061008ea547aa56acb5b2c035e5910cf'
+  sha1 '8fed31e205e2035c20289495d045381c451c4517'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
