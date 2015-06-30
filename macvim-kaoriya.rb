@@ -3,10 +3,10 @@ require 'formula'
 class MacvimKaoriya < Formula
   homepage 'https://github.com/splhack/macvim-kaoriya'
   # https://github.com/splhack/macvim/blob/master/src/version.c
-  version '7.4.712'
+  version '7.4.752'
   head 'https://github.com/splhack/macvim.git'
   url 'https://github.com/splhack/macvim.git'
-  sha1 '8fed31e205e2035c20289495d045381c451c4517'
+  sha1 '4bfde446e64fa3c594711aa92ea428a4f7f1a736'
 
   option "with-luajit", "Build with luajit"
   option "with-lua", "Build with lua"
@@ -15,7 +15,6 @@ class MacvimKaoriya < Formula
   depends_on 'cmigemo-mk' => :build
   depends_on 'ctags-objc-ja' => :build
   depends_on 'gettext-mk' => :build
-  # depends_on 'lua'
 
   depends_on 'luajit' => :optional
   depends_on 'lua' => :optional
@@ -24,11 +23,9 @@ class MacvimKaoriya < Formula
     # patch_level = version.to_s.split('.').last.to_i
     # {
     #   'p0' => (10..patch_level).map { |i| 'ftp://ftp.vim.org/pub/vim/patches/7.3/7.3.%03d' % i },
-    #   # 'p1' => 'https://gist.github.com/pekepeke/5864150/raw/8e8949979509d7997713137e9ffe49f59522819c/macvim-kaoriya_luajit_v73.patch',
     # }
     {
       :p1 => [
-        # 'https://bitbucket.org/k_takata/vim-ktakata-mq/raw/f8c3f9f5de704bc74a9d61fc633ecd2266b10d0a/vim-7.4.178-breakindent.patch',
         'https://bitbucket.org/koron/vim-kaoriya-patches/raw/6658116d59073a4471a83fea41a0791718773a96/X010-autoload_cache.diff',
         'https://gist.github.com/Shougo/5654189/raw'
       ]
@@ -92,11 +89,6 @@ class MacvimKaoriya < Formula
       s.gsub! /^(MSGMERGE\s*=.*)(msgmerge.*)/, "\\1#{gettext}\\2"
     end
 
-    # inreplace 'src/auto/config.mk' do |s|
-    #   # s.gsub! "-L#{Formula.factory('readline').installed_prefix}/lib", ''
-    #   s.gsub! "-L#{HOMEBREW_PREFIX}/Cellar/readline/6.2.2/lib", ''
-    # end
-
     Dir.chdir('src/po') {system 'make'}
     system 'make'
 
@@ -122,7 +114,6 @@ class MacvimKaoriya < Formula
     end
 
     cp "#{Formula.factory('ctags-objc-ja').installed_prefix}/bin/ctags", macos
-    # cp "#{HOMEBREW_PREFIX}/bin/ctags", macos
 
     dict = runtime + 'dict'
     mkdir_p dict
@@ -130,17 +121,6 @@ class MacvimKaoriya < Formula
       cp f, dict
     end
 
-    # begin
-    #   safe_system "otool -L #{macos + 'Vim'} | grep #{lib}"
-    # rescue ErrorDuringExecution => e
-    #   gettext = Formula.factory('gettext')
-    #   if gettext.installed?
-    #     # overrides homebrew gettext
-    #     lib = "#{Formula.factory('gettext').installed_prefix}/lib/libintl.8.dylib"
-    #   end
-    # end
-
-    # CMapResources.new.brew do
     resource("CMapResources").stage do
       cp 'CMap/UniJIS-UTF8-H', runtime/'print/UniJIS-UTF8-H.ps'
     end
@@ -166,10 +146,7 @@ class MacvimKaoriya < Formula
 
     if luadylib
       cp luadylib, app + 'Frameworks' if File.exist? luadylib
-    # File.open(vimdir + 'vimrc', 'a').write <<EOL
-# let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
-# EOL
-    File.open(vimdir + 'vimrc', 'r+').write <<EOL
+      File.open(vimdir + 'vimrc', 'r+').write <<EOL
 let $LUA_DLL = simplify($VIM . '/../../Frameworks/#{File.basename(luadylib)}')
 #{File.open(vimdir + 'vimrc').read}
 EOL
@@ -177,7 +154,7 @@ EOL
   end
 
   resource("CMapResources") do
-    url 'http://jaist.dl.sourceforge.net/project/cmap.adobe/cmapresources_japan1-6.tar.z'
-    sha1 '9467d7ed73c16856d2a49b5897fc5ea477f3a111'
+    url 'https://github.com/adobe-type-tools/cmap-resources/raw/master/cmapresources_japan1-6.zip'
+    sha1 '83b148d19d5ad6e2d15c638a14eeec77c8939451'
   end
 end
